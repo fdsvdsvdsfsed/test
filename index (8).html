@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Form</title>
+    <style>body {
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif, sans-serif;
+            background-color: #af7a95;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            color: rgb(57, 5, 49);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        input[type="radio"] + label,
+        input[type="checkbox"] + label {
+            margin-right: 20px;
+        }
+
+        input[type="text"].error {
+            border-color: red;
+        }
+
+        input[type="text"].valid {
+            border-color: green;
+        }
+
+        #submit {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+        }
+
+        #submit:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #message {
+            display: block;
+            margin-top: 20px;
+            font-weight: bold;
+            color: red;
+            text-align: center;
+        }
+
+        .error {
+            border-color: red;
+        }
+
+        .valid {
+            border-color: green;
+        }
+    </style>
+</head>
+<h2> Booking Place For Your Dinner</h2>
+<body>
+
+    <div>
+        <label for="name" class="form-label">Name: </label>
+        <input type="text" id="name" oninput="validateForm()" onblur="NameLoseFocus()" />
+    </div><br>
+    
+    <div>
+        <label for="phone" class="form-label">Phone Number: </label>
+        <input type="text" id="phone" oninput="validateForm()" onblur="PhoneLoseFocus()" />
+    </div><br>
+
+    <div>
+        <label>Program time</label><br>
+        <input type="radio" value="05:00 PM" name="time" id="five_pm" checked />
+        <label for="five_pm">05:00 PM</label><br>
+        <input type="radio" value="06:00 PM" name="time" id="six_pm" />
+        <label for="six_pm">06:00 PM</label><br>
+        <input type="radio" value="07:00 PM" name="time" id="seven_pm"  />
+        <label for="seven_pm">07:00 PM</label><br>
+        <input type="radio" value="08:00 PM" name="time" id="eight_pm" />
+        <label for="eight_pm">08:00 PM</label>
+    </div><br>
+
+    <label>What would you like to have with us?</label><br>
+    <input type="checkbox" name="category" id="starters" value="Starters" />
+    <label for="starters">Starters</label><br>
+    <input type="checkbox" name="category" id="main_course" value="Main Course" />
+    <label for="main_course">Main Course</label><br>
+    <input type="checkbox" name="category" id="desserts" value="Desserts" />
+    <label for="desserts">Desserts</label><br>
+    <input type="checkbox" name="category" id="drinks" value="Drinks" />
+    <label for="drinks">Drinks</label>
+    <br><br>
+
+    <div>
+        <button onclick="Submit()" id="submit" disabled>Submit</button>
+        <label id="message">. . .</label>
+    </div>
+
+    <script>
+        const initialTime = document.querySelector('input[name="time"]:checked').value;
+        if (initialTime === "05:00 AM") {
+            document.getElementById("submit").disabled = true;
+        }
+
+        function validateForm() {
+            var name = document.getElementById('name').value.trim();
+            var phone = document.getElementById('phone').value.trim();
+            var submitButton = document.getElementById('submit');
+
+            if (name !== "" && phone !== "" && phone.length === 6 && /^\d/.test(phone)) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        function Submit() {
+            const selectedItems = [];
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => selectedItems.push(checkbox.value));
+
+            const selectedTime = document.querySelector('input[name="time"]:checked').value;
+
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+
+            const messageLabel = document.getElementById('message');
+
+            if (name === '') {
+                messageLabel.textContent = 'Error: Name is empty.';
+            } else if (phone === '') {
+                messageLabel.textContent = 'Error: Phone number is empty.';
+            } else {
+                let items = selectedItems.join(', ');
+                let message = `${name} (${phone}) will attend ${selectedTime} program and they will take ${items}`;
+                messageLabel.textContent = message;
+            }
+        }
+
+        function NameLoseFocus() {
+            const nameInput = document.getElementById('name');
+            const fullName = nameInput.value.trim();
+
+            if (fullName === '') {
+                nameInput.classList.add('error');
+                nameInput.classList.remove('valid');
+                document.getElementById('message').textContent = 'Error: Name is empty.';
+            } else {
+                const names = fullName.split(' ');
+                if (names.length < 2) {
+                    nameInput.classList.add('error');
+                    nameInput.classList.remove('valid');
+                    document.getElementById('message').textContent = 'Error: First and last names are required.';
+                } else {
+                    nameInput.classList.add('valid');
+                    nameInput.classList.remove('error');
+                    document.getElementById('message').textContent = '';
+                }
+            }
+        }
+
+        function PhoneLoseFocus() {
+            const phoneInput = document.getElementById('phone');
+            const phone = phoneInput.value.trim();
+
+            if (phone === '') {
+                phoneInput.classList.add('error');
+                phoneInput.classList.remove('valid');
+                document.getElementById('message').textContent = 'Error: Phone number is empty.';
+            } else if (phone.length !== 6) {
+                phoneInput.classList.add('error');
+                phoneInput.classList.remove('valid');
+                document.getElementById('message').textContent = 'Error: Phone numbers must have exactly 6 characters.';
+            } else if (!/^\d/.test(phone)) {
+                phoneInput.classList.add('error');
+                phoneInput.classList.remove('valid');
+                document.getElementById('message').textContent = 'Error: Phone number must start with a number.';
+            } else {
+                phoneInput.classList.add('valid');
+                phoneInput.classList.remove('error');
+                document.getElementById('message').textContent = '';
+            }
+        }
+    </script>
+    
+</body>
+</html>
